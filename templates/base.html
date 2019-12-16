@@ -2,7 +2,7 @@
 <html lang="en">
 
 {% include "head.html" %}
-{% include 'navbar.html' %}
+{% include "navbar.html" %}
 
 <body>
     <div class="mt-5 pt-4">
@@ -21,6 +21,9 @@
         {% block content  %}
         {% endblock content %}
 
+        {% block extra_body %}
+        {% endblock %}
+
         {% include "footer.html" %}
         {% include "scripts.html" %}
 
@@ -28,3 +31,4 @@
 
 
 </html>
+
