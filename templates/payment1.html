@@ -1,0 +1,611 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+
+
+
+
+{%  block extra_head %}
+<style class="ng-scope" type="text/css">
+  /* .ep-body {
+      width: 100%;
+      padding: 0 15px;
+      background-color: #F1F4F6;
+    } */
+
+
+
+  .ep-box .alert-success {
+    font-size: 12px;
+  }
+
+  .ep-seprator hr {
+    border-top: 1px solid #d1d1d1;
+  }
+
+  /*verified tick mark animation*/
+  .icon-container {
+    width: 80%;
+    height: 80%;
+    border-radius: 100%;
+    overflow: hidden;
+    position: absolute;
+    z-index: 1;
+    margin: 0;
+    top: 10%;
+    left: 10%;
+  }
+
+  .success {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    animation: bg-success 2s 1.5s ease-out;
+    animation-fill-mode: forwards;
+    border-radius: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  .success:before,
+  .success:after {
+    content: "";
+    position: absolute;
+    background: white;
+  }
+
+  .success:before {
+    left: 21%;
+    top: 53%;
+    width: 5px;
+    transform-origin: top;
+    transform: rotate(-54deg);
+    animation: success-before 0.1s 2s ease-out;
+    animation-fill-mode: forwards;
+  }
+
+  .success:after {
+    height: 5px;
+    width: 0;
+    left: 42%;
+    top: 70%;
+    transform-origin: top left;
+    transform: rotate(-54deg);
+    animation: success-after 0.2s 2.2s ease;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes success-before {
+    0% {
+      height: 0;
+    }
+
+    100% {
+      height: 20px;
+    }
+  }
+
+  @keyframes success-after {
+    from {
+      width: 0;
+    }
+
+    to {
+      width: 30px;
+    }
+  }
+
+  .loader-container {
+    position: relative;
+    height: 80px;
+    width: 80px;
+    padding: 10px;
+    border-radius: 100%;
+    margin: auto;
+  }
+
+  .loader-container:before {
+    content: "";
+    position: absolute;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    border-radius: 100%;
+    padding: 10px;
+    top: 0;
+    left: 0;
+  }
+
+  @keyframes bg-success {
+    0% {
+      background: #e9e9e9;
+    }
+
+    100% {
+      background: #60BB47;
+    }
+  }
+
+  @charset "UTF-8";
+
+  [ng\:cloak],
+  [ng-cloak],
+  [data-ng-cloak],
+  [x-ng-cloak],
+  .ng-cloak,
+  .x-ng-cloak,
+  .ng-hide:not(.ng-hide-animate) {
+    display: none !important;
+  }
+
+  .ng\:form {
+    display: block;
+  }
+
+  .ng-animate-shim {
+    visibility: hidden;
+  }
+
+  .ng-anchor {
+    position: absolute;
+  }
+
+  .ep-box {
+    padding: 20px;
+  }
+
+  .ep-box table {
+    margin-bottom: 0;
+  }
+
+  .ep-total-amt {
+    background-color: #e9e9e9;
+    font-weight: bold;
+  }
+
+  .ep-txn-detail {
+    padding: 0;
+  }
+
+  .ep-login {
+    padding: 0;
+  }
+
+  .ep-login .ep-form {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .ep-box {
+    padding: 20px;
+  }
+
+  .ep-box .panel-title {
+    font-weight: bold;
+  }
+
+  .ep-login-box {
+    margin: auto;
+    width: 384px;
+  }
+
+  .form-control {
+    background: transparent;
+    margin: auto;
+    padding: 0px;
+    text-align: center;
+    te
+
+    display: inline-block;
+
+
+  }
+
+  .ep-login .form button:hover,
+  .ep-login .form button:active,
+  .ep-login .form button:focus {
+    width: inherit;
+  }
+
+  .ep-form .panel {
+    box-shadow: none;
+
+    display: block;
+    align-items: center;
+
+
+    text-align: center;
+    margin: 50px 0px;
+    padding: 0px;
+
+  }
+  
+</style>
+{% endblock extra_head %}
+
+<!-- <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static '/css/style.css' %}">
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
+  <link href="https://cdn.esewa.com.np/ui/css/user-module.css" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+    integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+  <script src="{% static '/js/bootstrap.min.js' %}"></script>
+  <script src="/js/angular.min.js"></script>
+  <script src="/js/angular-route.min.js"></script>
+  <script src="/js/angular-ng-storage.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+  <script src="/js/restangular.min.js"></script>
+  <script src="/js/lodash.min.js"></script>
+  <script src="/js/angular-cookies.min.js"></script> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/1.0.3/angular-ui-router.min.js"></script>
+  <script src="https://cdn.esewa.com.np/ui/js/qr/qr-code.js"></script>
+  <script src="https://cdn.esewa.com.np/ui/js/qr/jquery-qrcode-0.17.0.min.js"></script>
+  <title>ePay</title>-->
+
+<!-- </head>
+
+<body ng-app="epayApp" class="ep-body ng-scope">
+  <div id="wrapper" text-align="center" class="row">
+    ngInclude: '/templates/top_navigation_bar.html' -->
+<!-- <span ng-include="'/templates/top_navigation_bar.html'"
+      class="ng-scope"> -->
+<!-- nav container -->
+<!-- <div class="container-fluid nav-main-bg navbar-fixed-top ng-scope" ng-controller="TxnDetailsController">
+
+      <div class="container col-lg-12">
+        <div class="row mn col-lg-9" style="padding-left:15px;">
+
+        </div>
+        <div class="nav navbar-nav navbar-right col-lg-3" style="color:white;"> -->
+
+<!-- ngIf: product.balance -->
+<!-- 
+        </div> -->
+<!--<div class="row mn">
+            <span ng-if="$root.product.fullName">{{product.fullName}}</span> <br />
+            <span ng-if="$root.product.balance">{{product.balance}}</span>
+        </div>-->
+<!-- </div>
+
+    </div>
+
+    </span>
+  </div> -->
+<!-- uiView: -->
+{% block content %}
+
+<div class="container">
+  <div class="table-responsive text-nowrap">
+
+    <div class="panel image-center">
+      <a class="vertical-align:middle" rel="home" title="eSewa">
+        <img style="display: block; position: relative; margin:auto; height: 100px;" src="{% static '/img/esewa_epay_logo.png' %}" alt="eSewa">
+      </a>
+
+
+      <h4 class="my-3 text-center">Please login to make your payment</h4>
+    </div>
+  </div>
+
+
+
+
+  <!-- <div class="ep-login col-md-6 justify-content-between ng-scope" ng-controller="ErrorMessageController">
+      <div class="ep-form form">
+        <div class="panel ep-box ep-login-box">
+          <div class="panel-heading"> -->
+  <!-- <h3 class="panel-title text-center">Login</h3> -->
+
+  <!-- ngIf: error -->
+
+  <!-- panel-body ml-10 mr-10 -->
+
+  <div class="ep-form form col-md-4 offset-md-4">
+    <div class="panel ep-box ep-login-box">
+
+      <form action="." method="POST" class="ng-pristine ng-valid">
+        <div class="form-group">
+          <label>eSewa ID: </label>
+          <input class="form-control" name="username" placeholder="email/ mobile number" type="text">
+        </div>
+        <div class="form-group">
+          <label>Password:</label>
+          <input class="form-control" name="password" placeholder="password" type="password">
+        </div>
+
+        <input name="amt" type="hidden" value="90">
+        <input name="scd" type="hidden" value="epay_payment">
+        <input name="pid" type="hidden" value="ee2c3ca1-696b-4cc5-a6be-2c40d929d453">
+        <input name="su" type="hidden" value="http://merchant.com.np/page/esewa_payment_success?q=fu">
+        <input name="fu" type="hidden" value="http://merchant.com.np/page/esewa_payment_failed?q=fu">
+        <input name="tAmt" type="hidden" value="100">
+
+        <div class="form-group">
+          <button class="form-control btn btn-success btn-raised ng-scope" ng-click="showLoading()" type="submit"
+            style="margin-left:0px;">
+            login
+          </button>
+          <button class="form-control btn btn-default btn-raised ng-scope" ng-click="loginCancel()"
+            ng-controller="EpayLoginController" style="margin-left:0px;" type="button">Cancel
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ngIf: showloadingBar -->
+
+
+<!-- *************************************************************** -->
+
+
+<div class="container mt10 ng-scope">
+  <!-- <div class="row mt15 col-md-30 align-items-center"> -->
+  <!-- <div ng-class="qrEnable ? 'col-md-4' : 'col-md-8'" class="col-md-8"> -->
+
+  <!--Login form-->
+  <div class="col-md-10 mb-4" style="margin-left: 50px; margin-right: 50px;">
+
+    <!-- Heading -->
+    <h4 class="d-flex justify-content-between align-items-center mb-3">
+      <span class="text-muted">Your cart</span>
+      <span class="badge badge-secondary badge-pill">3</span>
+    </h4>
+
+    <!-- Cart -->
+    <ul class="list-group mb-3 z-depth-1">
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6 class="my-0">Product name</h6>
+          <small class="text-muted">Brief description</small>
+        </div>
+        <span class="text-muted">$12</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6 class="my-0">Second product</h6>
+          <small class="text-muted">Brief description</small>
+        </div>
+        <span class="text-muted">$8</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between lh-condensed">
+        <div>
+          <h6 class="my-0">Third item</h6>
+          <small class="text-muted">Brief description</small>
+        </div>
+        <span class="text-muted">$5</span>
+      </li>
+
+      <li class="list-group-item d-flex justify-content-between">
+        <span>Total (USD)</span>
+        <strong>$20</strong>
+      </li>
+    </ul>
+    <!-- Cart -->
+
+    <!-- Promo code -->
+
+    <!-- Promo code -->
+
+  </div>
+  <!-- ngInclude: -->
+  <!-- <ng-include src="'/templates/txndetails.html'" class="ng-scope"> -->
+  <div id="txn_details " class="ep-txn-detail ng-scope" ng-controller="TxnDetailsController">
+    <div class="panel ep-box min-height-432">
+      <div class="panel-heading col-lg-12">
+        <h3 class="panel-title">
+          Transaction Details
+        </h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-lg-12 ">
+            <h5 class="col-lg-6 pn bold ng-binding">eSewa ePay Payment</h5>
+            <h5 class="col-lg-6 pn text-left bold" style="text-align: right">NPR</h5>
+
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>Product Amount:</td>
+                  <td id="amt" align="right" class="ng-binding">30.0</td>
+                </tr>
+                <tr>
+                  <td>Tax Amount:</td>
+                  <td id="txAmt" align="right" class="ng-binding">5.00</td>
+                </tr>
+                <tr>
+                  <td>Service Charge:</td>
+                  <td id="psc" align="right" class="ng-binding">2.00</td>
+                </tr>
+
+                <tr>
+                  <td>Delivery Charge:</td>
+                  <td id="pdc" align="right" class="ng-binding">3.00</td>
+                </tr>
+
+                <tr class="ep-total-amt">
+                  <td>Total Amount:</td>
+                  <td id="tAmt" align="right" class="ng-binding">100.00</td>
+                </tr>
+
+                <tr style="display: none !important;">
+                  <td>Service Code:</td>
+                  <td id="scd" align="right" class="ng-binding">epay_payment</td>
+                </tr>
+
+                <tr style="display: none !important;">
+                  <td>Product ID:</td>
+                  <td id="pid" align="right" class="ng-binding">
+                    ee2c3ca1-696b-4cc5-a6be-2c40d929d453</td>
+                </tr>
+                <tr style="display: none !important;">
+                  <td id="su" align="right" class="ng-binding">
+                    http://merchant.com.np/page/esewa_payment_success?q=su</td>
+                </tr>
+                <!--<tr style="display: none !important;">-->
+                <tr style="display: none !important;">
+
+                  <td id="fu" align="right" class="ng-binding">
+                    http://merchant.com.np/page/esewa_payment_failed?q=fu</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ng-controller="EpayQrPaymentController" ng-init="isQrEpayEnable(product)" class="ng-scope"> </div>
+    <!-- </div> -->
+
+
+  </div>
+  <!-- <div ng-class="qrEnable ? 'col-md-8' : 'col-md-4'" class="col-md-4"> -->
+  <div class="panel row">
+
+    <!-- <ng-include src="'/templates/login.html'" class="ng-scope"> -->
+
+
+
+    <!-- ngInclude: -->
+
+    <!-- ngInclude: -->
+    <!-- <ng-include src="'/html/templates/qr/epayqr.html' | cdn" class="ng-scope">
+                            <div ng-controller="EpayQrPaymentController" ng-show="qrEnable"
+                                class="col-sm-6 ng-scope ng-hide">
+                                <div class="ep-box">
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-md-12 ep-img-logo">
+                                            <div class="ep-logo-container fonepay-img">
+                                                <script data-pagespeed-no-defer="" type="text/javascript">
+                                                    (function () {
+                                                        for (var g = "function" == typeof Object.defineProperties ? Object.defineProperty :
+                                                            function (b, c, a) {
+                                                                if (a.get || a.set) throw new TypeError("ES3 does not support getters and setters."); b != Array.prototype && b != Object.prototype && (b[c] = a.value)
+                                                            }, h = "undefined" != typeof window && window === this ? this : "undefined" != typeof global && null != global ? global : this, k = ["String", "prototype", "repeat"], l = 0; l < k.length - 1; l++) { var m = k[l]; m in h || (h[m] = {}); h = h[m] } var n = k[k.length - 1], p = h[n], q = p ? p : function (b) { var c; if (null == this) throw new TypeError("The 'this' value for String.prototype.repeat must not be null or undefined"); c = this + ""; if (0 > b || 1342177279 < b) throw new RangeError("Invalid count value"); b |= 0; for (var a = ""; b;)if (b & 1 && (a += c), b >>>= 1) c += c; return a }; q != p && null != q && g(h, n, { configurable: !0, writable: !0, value: q }); var t = this; function u(b, c) { var a = b.split("."), d = t; a[0] in d || !d.execScript || d.execScript("var " + a[0]); for (var e; a.length && (e = a.shift());)a.length || void 0 === c ? d[e] ? d = d[e] : d = d[e] = {} : d[e] = c }; function v(b) { var c = b.length; if (0 < c) { for (var a = Array(c), d = 0; d < c; d++)a[d] = b[d]; return a } return [] }; function w(b) { var c = window; if (c.addEventListener) c.addEventListener("load", b, !1); else if (c.attachEvent) c.attachEvent("onload", b); else { var a = c.onload; c.onload = function () { b.call(this); a && a.call(this) } } }; var x; function y(b, c, a, d, e) { this.h = b; this.j = c; this.l = a; this.f = e; this.g = { height: window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight, width: window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth }; this.i = d; this.b = {}; this.a = []; this.c = {} } function z(b, c) { var a, d, e = c.getAttribute("data-pagespeed-url-hash"); if (a = e && !(e in b.c)) if (0 >= c.offsetWidth && 0 >= c.offsetHeight) a = !1; else { d = c.getBoundingClientRect(); var f = document.body; a = d.top + ("pageYOffset" in window ? window.pageYOffset : (document.documentElement || f.parentNode || f).scrollTop); d = d.left + ("pageXOffset" in window ? window.pageXOffset : (document.documentElement || f.parentNode || f).scrollLeft); f = a.toString() + "," + d; b.b.hasOwnProperty(f) ? a = !1 : (b.b[f] = !0, a = a <= b.g.height && d <= b.g.width) } a && (b.a.push(e), b.c[e] = !0) } y.prototype.checkImageForCriticality = function (b) { b.getBoundingClientRect && z(this, b) }; u("pagespeed.CriticalImages.checkImageForCriticality", function (b) { x.checkImageForCriticality(b) }); u("pagespeed.CriticalImages.checkCriticalImages", function () { A(x) }); function A(b) { b.b = {}; for (var c = ["IMG", "INPUT"], a = [], d = 0; d < c.length; ++d)a = a.concat(v(document.getElementsByTagName(c[d]))); if (a.length && a[0].getBoundingClientRect) { for (d = 0; c = a[d]; ++d)z(b, c); a = "oh=" + b.l; b.f && (a += "&n=" + b.f); if (c = !!b.a.length) for (a += "&ci=" + encodeURIComponent(b.a[0]), d = 1; d < b.a.length; ++d) { var e = "," + encodeURIComponent(b.a[d]); 131072 >= a.length + e.length && (a += e) } b.i && (e = "&rd=" + encodeURIComponent(JSON.stringify(B())), 131072 >= a.length + e.length && (a += e), c = !0); C = a; if (c) { d = b.h; b = b.j; var f; if (window.XMLHttpRequest) f = new XMLHttpRequest; else if (window.ActiveXObject) try { f = new ActiveXObject("Msxml2.XMLHTTP") } catch (r) { try { f = new ActiveXObject("Microsoft.XMLHTTP") } catch (D) { } } f && (f.open("POST", d + (-1 == d.indexOf("?") ? "?" : "&") + "url=" + encodeURIComponent(b)), f.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"), f.send(a)) } } } function B() { var b = {}, c; c = document.getElementsByTagName("IMG"); if (!c.length) return {}; var a = c[0]; if (!("naturalWidth" in a && "naturalHeight" in a)) return {}; for (var d = 0; a = c[d]; ++d) { var e = a.getAttribute("data-pagespeed-url-hash"); e && (!(e in b) && 0 < a.width && 0 < a.height && 0 < a.naturalWidth && 0 < a.naturalHeight || e in b && a.width >= b[e].o && a.height >= b[e].m) && (b[e] = { rw: a.width, rh: a.height, ow: a.naturalWidth, oh: a.naturalHeight }) } return b } var C = ""; u("pagespeed.CriticalImages.getBeaconData", function () { return C }); u("pagespeed.CriticalImages.Run", function (b, c, a, d, e, f) { var r = new y(b, c, a, e, f); x = r; d && w(function () { window.setTimeout(function () { A(r) }, 0) }) });
+                                                    })(); pagespeed.CriticalImages.Run('/ngx_pagespeed_beacon', 'https://cdn.esewa.com.np/ui/html/templates/qr/epayqr.html', '54h7IT5YGc', true, false, 'dtHhs_jWueU');</script>
+                                                <img src="/images/fonepay-fatafat.png"
+                                                    data-pagespeed-url-hash="318277639"
+                                                    onload="pagespeed.CriticalImages.checkImageForCriticality(this);">
+                                            </div>
+                                            <div class="ep-circle"></div>
+                                            <div class="ep-logo-container esewa-img">
+                                                <img src="/images/esewa-logo.png" data-pagespeed-url-hash="845640910"
+                                                    onload="pagespeed.CriticalImages.checkImageForCriticality(this);">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="text-center ep-qr-container">
+                                            <div id="qrCode"></div>
+                                            <div ng-show="showTickAnimation" class="success-qr-scan ng-hide">
+                                                <div class="loader-container">
+                                                    <div class="icon-container">
+                                                        <div class="success"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="ep-qr-instruction">
+                                            <h4 style="padding-left: 24px;"><strong>How do I pay using QR Code
+                                                    ?</strong></h4>
+                                            <ol>
+                                                <li>Open your eSewa application or mobile banking application.</li>
+                                                <li>Open QR scanner and scan</li>
+                                                <li>Tap on Confirm button to pay</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                            <style class="ng-scope">
+                                .ep-main {
+                                    padding: 20px;
+                                    background-color: white;
+                                    border-radius: 4px;
+                                    margin-bottom: 15px;
+                                }
+
+                                .ep-img-logo {
+                                    display: inline;
+                                    align-items: center;
+                                    margin-bottom: 30px;
+                                    justify-content: center;
+                                    align-self: center;
+                                    width: 100%;
+                                    text-align: center;
+                                }
+
+                                .ep-logo-container {
+                                    display: inline-block;
+                                }
+
+                                .ep-circle {
+                                    background-color: #dedede;
+                                    -webkit-border-radius: 100%;
+                                    -moz-border-radius: 100%;
+                                    border-radius: 100%;
+                                    height: 4px;
+                                    width: 4px;
+                                    margin: 0 10px;
+                                    display: inline-block;
+                                }
+
+                                .ep-logo-container img {
+                                    width: 116px;
+                                    margin: 0 12px;
+                                }
+
+                                .esewa-img img {
+                                    width: 92px !important;
+                                }
+
+                                .ep-qr-container {
+                                    position: relative;
+                                    margin-bottom: 15px;
+                                }
+
+                                .success-qr-scan {
+                                    position: absolute;
+                                    left: 50%;
+                                    margin-left: -40px;
+                                    top: 50%;
+                                    margin-top: -40px;
+                                }
+
+                                .ep-qr-container img {
+                                    width: 250px;
+                                    padding: 20px;
+                                    border: 1px #e9e9e9 solid;
+                                }
+
+
+                                .ep-qr-instruction {
+                                    color: #333;
+                                    padding: 15px;
+                                    line-height: 24px;
+                                }
+
+                                .ep-qr-instruction ol {
+                                    margin-top: 10px;
+                                }
+
+
+
+                            </style>
+                        </ng-include> -->
+    <!--<ng-include src="'/templates/epayqr.html'"></ng-include>-->
+  </div>
+
+</div>
+<!-- </div> -->
+
+
+
+</body>
+{% endblock content %}
