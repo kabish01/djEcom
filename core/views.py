@@ -10,6 +10,9 @@ from django.utils import timezone
 from .forms import CheckoutForm, CouponForm, RefundForm
 import random
 import string
+import requests
+
+
 # from khalti-web import KhaltiCheckout
 
 
@@ -83,7 +86,7 @@ class CheckoutView(View):
             return render(self.request, "checkout.html", context)
 
         except ObjectDoesNotExist:
-            messages.info("You do not have an active order")
+            messages.info(self.request, "You do not have an active order")
             return redirect('core:checkout')
         # form
 
@@ -225,13 +228,11 @@ class CheckoutView(View):
                 if payment_option == 'K':
                     return redirect('core:payment', payment_option='khalti')
                 elif payment_option == 'E':
-                    return redirect('core:payment1', payment_option='esewa')
+                    return redirect('core:payment', payment_option='esewa')
                 else:
                     messages.warning(
                         self.request, "Invalid payment option selected")
 
-            messages.warning(self.request, "Failed checkout")
-            return redirect('core:checkout')
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("core:order-summary")
@@ -240,52 +241,88 @@ class CheckoutView(View):
 class PaymentView(View):
     def get(self, *args, **kwargs):
 
-        try:
-            order = Order.objects.get(user=self.request.user, ordered=False)
+       
+        order = Order.objects.get(user=self.request.user, ordered=False)
 
-            # form = CheckoutForm()
-            if order.billing_address:
-                context = {
-                    # 'form': form,
-                    'order': order,
-                    'DISPLAY_COUPON_FORM': False
+        # form = CheckoutForm()
+        if order.billing_address:
 
-                }
-                return render(self.request, "payment.html", context)
+            context = {
+                # 'form': form,
+                'order': order,
+                'DISPLAY_COUPON_FORM': False
 
-            else:
-                messages.warning(
-                    self.request, "You have not added a billing address")
-                return redirect("core:checkout")
+            }
+            return render(self.request, "payment.html", context)
 
-        except ObjectDoesNotExist:
-            messages.info("You do not have an active order")
-            return redirect('core:checkout')
+        else:
+            messages.warning(
+                self.request, "You have not added a billing address")
+            return redirect("core:checkout")
+    
 
-        return render(self.request, 'payment.html')
 
     def post(self, *args, **kwargs):
-    
+
         order = Order.objects.get(user=self.request.user, ordered=False)
-        pub_key = 'test_public_key_4e38b46a170946d5a29516aa4100b194'
-        amt = int(order.get_total() * 100)
-        pid = order.items.item.pk
-        pname = order.items.item.title
 
-        config = {
-            'publicKey': pub_key,
-            'productIdentity': pid,
-            'productName': pname,
-            'productUrl':None,
-            'amount' : amt
-        }
+        # item = Item.objects.get(user=self.request.user, )
+        # pub_key = 'test_public_key_4e38b46a170946d5a29516aa4100b194'
+        # amt = int(order.get_total() * 100)
+        # pid = order.pk()
+        # pname = order.title()
+        # purl = '/product'
+        # pub_key = 'test_public_key_4e38b46a170946d5a29516aa4100b194'
+        # amt = int(order.get_total() * 100)
+        # pid = order.items.item.pk
+        # pname = order.items.item.title
+        # purl = '/product'
 
-        context = {
+        # config = {
+        #     publicKey= pub_key,
+        #     productIdentity: pid,
+        #     productName: pname,
+        #     productUrl=None,
+        #     amount: amt
+        # }
+        if order.billing_address:
+            context = {
 
-            'order': order,
-            'config': config
-        }
-        return render(self.request, "paymemt.html",context)
+                'order': order,
+                'item': item
+                # 'config': config
+            }
+            return render(self.request, "paymemt.html", context)
+            messages.success(self.request, "Your order was successful!")
+
+            # Create the payment
+            # url = "https://khalti.com/api/v2/merchant-transaction/"
+            # payload = {}
+            # headers = {
+            # "Authorization": "Key test_secret_key_f59e8b7d18b4499ca40f68195a846e9b"                }
+
+            # response = requests.get(url, payload, headers=headers)
+
+            payment = Payment()
+        # # payment.charge_id = charge['id']
+            payment.user = self.request.user
+            payment.amount = order.get_total()
+            payment.save()
+
+        # # assign the payment to the order
+
+            order_items = order.items.all()
+            order_items.update(ordered=True)
+            for item in order_items:
+                item.save()
+
+            order.ordered = True
+            order.payment = payment
+            # TODO: assign ref code
+            order.ref_code = create_ref_code()
+
+            order.save()
+            return redirect("core:home")
 
         # pid = Order.objects.get(id=self.request.id)
         # pname = Order.objects.get(item=self.request.items)
@@ -341,30 +378,6 @@ class PaymentView(View):
         # resp=req.post(url, d)
 
         # From here
-
-        # Create the payment
-        payment = Payment()
-        # # payment.charge_id = charge['id']
-        payment.user = self.request.user
-        payment.amount = order.get_total()
-        payment.save()
-
-        # # assign the payment to the order
-
-        order_items = order.items.all()
-        order_items.update(ordered=True)
-        for item in order_items:
-            item.save()
-
-        order.ordered = True
-        order.payment = payment
-        # TODO: assign ref code
-        order.ref_code = create_ref_code()
-
-        order.save()
-
-        # messages.success(self.request, "Your order was successful!")
-        # return redirect("/")
 
 
 class HomeView(ListView):

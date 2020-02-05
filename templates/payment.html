@@ -38,16 +38,17 @@
 
 
 {% block extra_scripts %}
+{% csrf_token %}
 <script src="https://khalti.com/static/khalti-checkout.js"></script>
 <script>
     // var  = $('.hideable_shipping_form');
     var config = {
         // replace the publicKey with yours
-        "publicKey": 'test_public_key_4e38b46a170946d5a29516aa4100b194',
-        "productIdentity":"productIdentity",
-        "productName": "productName",
-        "productUrl":"/product/",
-        'amount':'amount',
+        "publicKey": "test_public_key_4e38b46a170946d5a29516aa4100b194" ,
+        "productIdentity": "{{ order.id }}",
+        "productName": "{{ order.title }}",
+        "productUrl": "https://www.google.com.np",
+        
         "eventHandler": {
             onSuccess(payload) {
                 // hit merchant api for initiating verfication
@@ -61,12 +62,14 @@
             }
         }
     };
-    var amount = $('.amount');
+    var amt = {{ order.get_total }} * 100
+    
     var checkout = new KhaltiCheckout(config);
     var btn = document.getElementById("payment-button");
     btn.onclick = function () {
-        checkout.show({ amount : amount });
+        checkout.show({ amount : amt });
     }
 </script>
 
 {% endblock extra_scripts %}
+

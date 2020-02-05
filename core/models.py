@@ -55,6 +55,8 @@ class Item(models.Model):
         return reverse("core:remove-from-cart", kwargs={
             'slug': self.slug
         })
+    
+
 
 
 class OrderItem(models.Model):
@@ -104,6 +106,7 @@ class Order(models.Model):
     received = models.BooleanField(default=False)
     refund_requested = models.BooleanField(default=False)
     refund_granted = models.BooleanField(default=False)
+    
 
 
 
@@ -128,6 +131,25 @@ class Order(models.Model):
     
     def __str__(self):
         return self.user.username
+
+    def id(self):
+        for order_item in self.items.all():
+            id = order_item.item.id
+        return id
+
+    def title(self):
+        for order_item in self.items.all():
+            title = order_item.item.title
+        return title
+
+    def url(self):
+        for order_item in self.items.all():
+            url = order_item.item.get_absolute_url
+        return url
+
+
+
+     
 
     def get_total(self):
         total = 0
